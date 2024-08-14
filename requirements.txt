@@ -1,0 +1,6 @@
+numpy
+opencv-python
+scikit-learn
+open3d
+ultralytics
+lapx
