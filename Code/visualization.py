@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from random import randint
 import os
 import cv2
 from utils import compute_box_3d

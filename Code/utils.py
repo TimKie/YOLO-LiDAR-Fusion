@@ -1,8 +1,6 @@
 import numpy as np
 from scipy.spatial.transform import Rotation as R
-import os
-import cv2
-from calibration import *
+
 
 def compute_relative_object_velocity(ground_center_frame1, ground_center_frame2, time_between_frames):
     # Compute displacement vector between ground centers

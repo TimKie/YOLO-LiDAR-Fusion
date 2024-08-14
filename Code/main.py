@@ -1,5 +1,6 @@
 import argparse
 import os
+from random import randint
 from calibration import *
 from data_processing import *
 from fusion import *
@@ -11,7 +12,7 @@ from visualization import *
 
 if __name__ == "__main__":
     # Define the base dataset path
-    KITTI_dataset_path = "../KITTI_dataset/"
+    KITTI_dataset_path = "../../KITTI_dataset/"
 
     # Create the parser
     parser = argparse.ArgumentParser()
@@ -22,10 +23,10 @@ if __name__ == "__main__":
     # Add optional arguments for detection or tracking, model size, dataset path, erosion, depth and output path
     parser.add_argument('--mode', dest='detection_or_tracking', type=str, default="detect", choices=['detect', 'track'], help="specify if the model should use detection only ('detect') or also tracking ('track')")
     parser.add_argument('--model-size', dest='model_size', type=str, default="m", choices=['n', 's', 'm', 'l', 'x'], help="specify the size of the YOLOv8 model (n, s, m, l, x)")
-    parser.add_argument('--dataset-path', dest='dataset_path', type=str, default="../KITTI_dataset/", help="specify the path to the KITTI dataset")
+    parser.add_argument('--dataset-path', dest='dataset_path', type=str, default="../KITTI_dataset/", help="specify the relative path to the KITTI dataset")
     parser.add_argument('--erosion', dest='erosion', type=int, default=25, help="specify the erosion value to be used by the model")
     parser.add_argument('--depth', dest='depth', type=int, default=20, help="specify the depth value to be used by the model")
-    parser.add_argument('--output-path', dest='output_path', type=str, default="../Model_Output/", help="specify the path where the output should be saved")
+    parser.add_argument('--output-path', dest='output_path', type=str, default="../Model_Output/", help="specify the relative path where the output should be saved")
     parser.add_argument('--pca', dest='pca', type=bool, default=False, help="specify wheter PCA should be used to create the 3D bounding boxes for all detected objects")
 
     # Parse the initial arguments to determine the image_index
@@ -37,7 +38,7 @@ if __name__ == "__main__":
 
     # Conditional Argument Addition for video input directory
     if args.image_index == "video":
-        parser.add_argument('--video-dir', dest='video_directory', type=str, default="../Video_Directory", help="specify the path of the directory that contains the ordered frames of the video that the model should process (only when first argument is 'video')")
+        parser.add_argument('--video-dir', dest='video_directory', type=str, default="../Video_Directory", help="specify the relative path of the directory that contains the ordered frames of the video that the model should process (only when first argument is 'video')")
 
     # Re-parse the arguments to include the conditionally added arguments
     args = parser.parse_args()
@@ -86,7 +87,7 @@ if __name__ == "__main__":
         if video_files:
             last_video_index = int(video_files[-1][-5])
         else:
-            last_video_index = 1
+            last_video_index = 0
 
         # Initilaize array to store processed images
         all_processed_frames = []
