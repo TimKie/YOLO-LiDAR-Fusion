@@ -4,3 +4,4 @@ scikit-learn
 open3d
 ultralytics
 lapx
+matplotlib
