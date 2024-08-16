@@ -31,10 +31,11 @@ Follow the steps below to set up the environment:
     cd YOLO-LiDAR-Fusion
     ```
 
-3. Optionally start a virtual environment:
+3. Optionally create and start a virtual environment:
 
     ```python
     python -m venv venv
+    source venv/bin/activate
     ```
 
 4. Install required libraries:
