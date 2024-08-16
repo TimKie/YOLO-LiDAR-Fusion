@@ -47,7 +47,7 @@ Follow the steps below to set up the environment:
 ## 4. Usage
 Follow the steps below to use the model:
 
-_Note:_ Make sure that the file structure is as stated below in [File Stucture](#5-file-structure). 
+_Note:_ Make sure that the file structure is as stated below in [File Stucture](#6-file-structure). 
 
 1. Go to the directory where the implementation is located:
 
@@ -99,9 +99,25 @@ _Note:_ Make sure that the file structure is as stated below in [File Stucture](
   
 - If _image_index_ is set to 'video', the following parameter has to be specified:
    - **--video-dir**: specifies the relative path of the directory that contains the ordered frames of the video that the model should process (defuat: '../KITTI_raw_data')
-   
 
-## 5. File Structure
+## 5. Usage Examples:
+- Display the detection results of image '000010' from the KITTI dataset with an erosion factor of 15 and a depth factor of 30:
+  
+      python main.py 000010 --erosion 15 --depth 30
+      
+- Use the biggest YOLOv8 model (x) and use PCA to create the bounding boxes for image '000032' from the KITTI dataset and save the result in the diretory '../Model_Output':
+
+      python main.py 000032 --model-size x --pca True --output-path ../Model_Output
+
+- Process consecutive frames from the raw data section of the KITTI dataset website which are stored in the directory 'KITTI_raw_data' by using the small YOLOv8 model size, tracking and PCA. The processed video is stored at the default output directory './Model_Output':
+
+      python main.py video --video-dir ./KITTI_raw_data --mode track --model-size s --pca True
+
+- Process 5 random images form the 'KITTI_dataset' diretory (as it is default) by using an erosion factor of 15, a depth factor of 20 and the smallest YOLOv8 model size (n). The detection results are stored in the default output directory './Model_Output':
+
+      python main.py random --image-amount 5 --depth 20 --erosion 15 -model-size n
+  
+## 6. File Structure
 The file structure is important to use the model without modifying the dataset paths in the main.py file. It should be as follows:
 
 _Notes:_ 
