@@ -18,16 +18,16 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     # Add a mandatory argument for the image index
-    parser.add_argument('image_index', type=str, help="number of the image (between '000000' and '007517') or 'random' for multiple random images or 'evaluation' to process the complete dataset")
+    parser.add_argument('image_index', type=str, help="number of the image (between '000000' and '007517') or 'random' for multiple random images or 'evaluation' to process the complete dataset or 'video' to process raw data and create a video")
 
     # Add optional arguments for detection or tracking, model size, dataset path, erosion, depth and output path
     parser.add_argument('--mode', dest='detection_or_tracking', type=str, default="detect", choices=['detect', 'track'], help="specify if the model should use detection only ('detect') or also tracking ('track')")
     parser.add_argument('--model-size', dest='model_size', type=str, default="m", choices=['n', 's', 'm', 'l', 'x'], help="specify the size of the YOLOv8 model (n, s, m, l, x)")
-    parser.add_argument('--dataset-path', dest='dataset_path', type=str, default="../KITTI_dataset/", help="specify the relative path to the KITTI dataset")
     parser.add_argument('--erosion', dest='erosion', type=int, default=25, help="specify the erosion value to be used by the model")
     parser.add_argument('--depth', dest='depth', type=int, default=20, help="specify the depth value to be used by the model")
-    parser.add_argument('--output-path', dest='output_path', type=str, default="../Model_Output/", help="specify the relative path where the output should be saved")
     parser.add_argument('--pca', dest='pca', type=bool, default=False, help="specify wheter PCA should be used to create the 3D bounding boxes for all detected objects")
+    parser.add_argument('--dataset-path', dest='dataset_path', type=str, default="../KITTI_dataset/", help="specify the relative path to the KITTI dataset")
+    parser.add_argument('--output-path', dest='output_path', type=str, default="", help="specify the relative path where the output should be saved")
 
     # Parse the initial arguments to determine the image_index
     args, unknown = parser.parse_known_args()
@@ -38,7 +38,7 @@ if __name__ == "__main__":
 
     # Conditional Argument Addition for video input directory
     if args.image_index == "video":
-        parser.add_argument('--video-dir', dest='video_directory', type=str, default="../Video_Directory", help="specify the relative path of the directory that contains the ordered frames of the video that the model should process (only when first argument is 'video')")
+        parser.add_argument('--video-dir', dest='video_directory', type=str, default="../KITTI_raw_data", help="specify the relative path of the directory that contains the ordered frames of the video that the model should process (only when first argument is 'video')")
 
     # Re-parse the arguments to include the conditionally added arguments
     args = parser.parse_args()
@@ -58,7 +58,12 @@ if __name__ == "__main__":
 
     # Apply model to data specified as arguments
     if args.image_index.isdigit() and len(args.image_index) == 6 and 0 <= int(args.image_index) <= 7517:
-        evaluate_single_data(KITTI_dataset_path, args.image_index, detector, args.erosion, args.depth)
+        if len(args.output_path) != 0:
+            os.makedirs(args.output_path, exist_ok=True)
+            output_path = os.path.join(args.output_path, f"processed_image_{args.image_index}.png")
+        else:
+            output_path = "show"
+        evaluate_single_data(KITTI_dataset_path, output_path, args.image_index, detector, args.erosion, args.depth)
 
     elif args.image_index == "evaluation":
         print(f"\nProcessing complete dataset at location {KITTI_dataset_path}")
@@ -67,7 +72,7 @@ if __name__ == "__main__":
         evaluate_dataset(KITTI_dataset_path, args.output_path, detector, args.erosion, args.depth)
 
     elif args.image_index == "video":
-        print(f"\nProcessing Frames in Input Video Directory {args.video_directory} ...")
+        print(f"\nProcessing Frames in Input Directory {args.video_directory} ...")
 
         # Read the files specified by the argument
         base_image_path = os.path.join(args.video_directory, f"image_02/data/")
@@ -77,7 +82,13 @@ if __name__ == "__main__":
         c2c_calib_path = os.path.join(base_calib_path, "calib_cam_to_cam.txt")
         v2c_calib_path = os.path.join(base_calib_path, "calib_velo_to_cam.txt")
 
-        output_path_video = os.path.join(args.output_path, "Results_Video/")
+        if len(args.output_path) == 0:
+            output_path_video = "../Model_Output/Results_Video/"
+        else:
+            output_path_video = os.path.join(args.output_path, "Results_Video/")
+
+        print(output_path_video)
+        
         os.makedirs(output_path_video, exist_ok=True)
 
         # Filter and sort files in the output video directory, ignoring hidden files
@@ -136,7 +147,10 @@ if __name__ == "__main__":
         # Format the integers to always be 6 digits with leading zeros
         image_indices_formatted = [str(i).zfill(6) for i in image_indices]
 
-        output_path_random = os.path.join(args.output_path, "Results_Random_Images/")
+        if len(args.output_path) == 0:
+            output_path_random = "../Model_Output/Results_Random_Images/"
+        else:
+            output_path_random = os.path.join(args.output_path, "Results_Random_Images/")
         
         print(f"Results will be stored in {output_path_random}")
         os.makedirs(output_path_random, exist_ok=True)
@@ -156,8 +170,15 @@ if __name__ == "__main__":
             lidar2cam = LiDAR2Camera(calib_path)
 
             # Process the frame
-            _, all_corners_3D, _, _, all_filtered_points_of_object, _ = detector.process_frame(frame, velodyne_path, lidar2cam, args.erosion, args.depth)
+            _, all_corners_3D, pts_3D, pts_2D, all_filtered_points_of_object, _ = detector.process_frame(frame, velodyne_path, lidar2cam, args.erosion, args.depth)
 
+            # Draw the predicted bounding boxes onto the frame
+            for pred_corner_3D in all_corners_3D:
+                plot_projected_pred_bounding_boxes(lidar2cam, frame, pred_corner_3D, (0, 0, 255))
+
+            # Draw the projected LiDAR points of the detected objects onto the frame
+            draw_projected_3D_points(lidar2cam, frame, pts_3D, pts_2D, np.vstack(all_filtered_points_of_object))
+                    
             # Create a bev representation
             bev = create_BEV(all_filtered_points_of_object, all_corners_3D)
 

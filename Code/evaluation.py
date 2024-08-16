@@ -63,7 +63,7 @@ def find_best_ious(gt_centers, gt_sizes, gt_rotations, det_centers, det_sizes, d
     return best_ious, best_det_indices
 
 
-def evaluate_single_data(dataset_path, image_index, detector, erosion, depth, categories=['Car', 'Pedestrian', 'Cyclist']):
+def evaluate_single_data(dataset_path, output_path, image_index, detector, erosion, depth, categories=['Car', 'Pedestrian', 'Cyclist']):
     # Set initial IoU values
     max_iou = -1
     avg_iou = -1
@@ -189,7 +189,7 @@ def evaluate_single_data(dataset_path, image_index, detector, erosion, depth, ca
     # Plot the GT bounding boxes
     for i, center in enumerate(all_gt_centers):
         gt_corners_3D = compute_box_3d(all_gt_sizes[i], center, all_gt_rotations[i])
-        #plot_projected_gt_bounding_boxes(lidar2cam, frame, gt_corners_3D, (255, 0, 0))
+        plot_projected_gt_bounding_boxes(lidar2cam, frame, gt_corners_3D, (255, 0, 0))
 
     for pred_corner_3D in all_pred_corners_3D:
         plot_projected_pred_bounding_boxes(lidar2cam, frame, pred_corner_3D, (0, 0, 255))
@@ -198,9 +198,16 @@ def evaluate_single_data(dataset_path, image_index, detector, erosion, depth, ca
 
     # Create a bev representation
     bev = create_BEV(all_filtered_points_of_object, all_pred_corners_3D)
+    
 
-    # Save the combined image for visualization
-    create_combined_image(frame, bev, output_path="show")
+    if output_path == "show":
+        # Show the combined image
+        create_combined_image(frame, bev, output_path)
+    else:
+         # Save the combined image for visualization
+        create_combined_image(frame, bev, output_path)
+        print(f"Processed Image saved in {output_path}")
+
 
 
 def evaluate_dataset(dataset_path, output_path, detector, erosion, depth, categories=['Car', 'Pedestrian', 'Cyclist']):

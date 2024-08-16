@@ -275,8 +275,6 @@ def create_combined_image(frame, bev, output_path):
         cv2.waitKey()
     else:
         # Save the combined image
-        if os.path.exists(output_path):
-            os.makedirs(output_path)
         cv2.imwrite(output_path, combined_image)
     
 
