@@ -16,12 +16,93 @@ _Note:_ The model can also be run on the CPU (slower).
 
 _Note:_ The code was developed and tested on Python 3.10. 
 
-### File Structure
+## 3. Setup
+Follow the steps below to set up the environment:
+
+1. Go to the diretory of your choice and clone the repository:
+
+    ```shell
+    git clone https://github.com/TimKie/YOLO-LiDAR-Fusion.git
+    ```
+
+2. Get into the working directory (root directory of the repository):
+
+    ```shell
+    cd YOLO-LiDAR-Fusion
+    ```
+
+3. Optionally create and start a virtual environment:
+
+    ```python
+    python -m venv venv
+    source venv/bin/activate
+    ```
+
+4. Install required libraries:
+
+    ```python
+    pip install -r requirements.txt
+    ```
+
+## 4. Usage
+Follow the steps below to use the model:
+
+_Note:_ Make sure that the file structure is as stated below in [File Stucture](#5-file-structure). 
+
+1. Go to the directory where the implementation is located:
+
+   ```shell
+   cd Code
+   ```
+
+2. The simplest command to process a single frame from the **KITTI_dataset** directory is as follows (where _image_index_ a 6 digit number between '000000' and '007517'):
+
+   ```shell
+   python main.py image_index
+   ```
+
+3. Below are shown some optional parameters that can be specified in the command:
+
+   ```shell
+   python main.py image_index --mode --model-size --erosion --depth --pca --dataset-path --output-path
+   ```
+
+   The parameters can take the following values:
+   - **image_index**:
+      - number of the image (between '000000' and '007517')
+      - 'random' for multiple random images
+      - 'evaluation' to process the complete dataset
+    
+   - **--mode**:
+      - detect (model only detects objects) (default)
+      - track (model detects and tracks objects)
+    
+   - **--model-size**: specifies the YOLOv8 model size that is used (n, s, m, l, x) (default: m)
+     
+   - **--erosion**: specifies the amount of erosion used by the model (smaller value --> higher erosion) (defualt: 25)
+   
+   - **--depth**: specifies the depth filter factor used by the model (smaller value --> more aggressive filtering) (default: 20)
+  
+   - **--pca**: specifies wheter PCA should be used to create the 3D bounding boxes for all detected objects (default: False)
+  
+   - **--dataset-path**: specifies the relative path to the KITTI dataset (default: '../KITTI_dataset/')
+  
+   - **--output-path**: specifies the relative path where the output should be saved (default: '../Model_Output/'
+
+   If _image_index_ is set to 'random', the following parameter has to be specified:
+   - **--image-amount**: specifies the desired amount of random images (defualt: 10)
+  
+   If _image_index_ is set to 'video', the following parameter has to be specified:
+   - **--video-dir**: specifies the relative path of the directory that contains the ordered frames of the video that the model should process (defuat: '../KITTI_raw_data')
+   
+
+## 5. File Structure
 The file structure is important to use the model without modifying the dataset paths in the main.py file. It should be as follows:
 
 _Notes:_ 
 
 The **KITTI_dataset** directory contains the training dataset of KITTI that can be downloaded [here](https://www.cvlibs.net/datasets/kitti/eval_object.php?obj_benchmark=3d).
+
 The **KITTI_raw_data** directory contains raw data of consecutive frames (for video inference) of the KITTI dataset that can be downloaded [here](https://www.cvlibs.net/datasets/kitti/raw_data.php).
    
     .
@@ -67,44 +148,3 @@ The **KITTI_raw_data** directory contains raw data of consecutive frames (for vi
     │       │   └── ...
     │       └── timestamps.txt
     └── requirements.py
-
-## 3. Setup
-Follow the steps below to set up the environment:
-
-1. Go to the diretory of your choice and clone the repository:
-
-    ```shell
-    git clone https://github.com/TimKie/YOLO-LiDAR-Fusion.git
-    ```
-
-2. Get into the working directory (root directory of the repository):
-
-    ```shell
-    cd YOLO-LiDAR-Fusion
-    ```
-
-3. Optionally create and start a virtual environment:
-
-    ```python
-    python -m venv venv
-    source venv/bin/activate
-    ```
-
-4. Install required libraries:
-
-    ```python
-    pip install -r requirements.txt
-    ```
-
-## 4. Usage
-Follow the steps below to use the model:
-
-_Note:_ Make sure that the file structure is as stated above in [Prerequisites](#2-prerequisites).
-
-1. Go to the directory where the implementation is located:
-
-   ```shell
-   cd Code
-   ```
-
-2. 
