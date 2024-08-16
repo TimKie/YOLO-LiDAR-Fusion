@@ -102,7 +102,7 @@ def filter_points_with_depth_clustering(points_of_object, eps=0.5, depth_factor=
     if print_info:
         print("\nFilter 3D LiDAR Points using DBSCAN ...")
 
-    # Compute min_samples as a percentage of total points
+    # Compute min_samples as a percentage of number of points
     min_samples = max(5, int(len(points_of_object) * 0.01))
     
     # Compute the depth values using the Euclidean Distance
