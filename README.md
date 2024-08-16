@@ -72,6 +72,7 @@ _Note:_ Make sure that the file structure is as stated below in [File Stucture](
       - number of the image (between '000000' and '007517')
       - 'random' for multiple random images
       - 'evaluation' to process the complete dataset
+      - 'video' to process raw data and create a processed video
     
    - **--mode**:
       - detect (model only detects objects) (default)
@@ -87,12 +88,16 @@ _Note:_ Make sure that the file structure is as stated below in [File Stucture](
   
    - **--dataset-path**: specifies the relative path to the KITTI dataset (default: '../KITTI_dataset/')
   
-   - **--output-path**: specifies the relative path where the output should be saved (default: '../Model_Output/'
+   - **--output-path**: specifies the relative path where the output should be saved
 
-   If _image_index_ is set to 'random', the following parameter has to be specified:
+- If _image_index_ is a 6 digit number between '000000' and '007517':
+    - if **--output-path** is not specified: processed image will only be displayed
+    - if **--output-path** is specified: processed image will be stored in directory passed as parameter
+
+- If _image_index_ is set to 'random', the following parameter has to be specified:
    - **--image-amount**: specifies the desired amount of random images (defualt: 10)
   
-   If _image_index_ is set to 'video', the following parameter has to be specified:
+- If _image_index_ is set to 'video', the following parameter has to be specified:
    - **--video-dir**: specifies the relative path of the directory that contains the ordered frames of the video that the model should process (defuat: '../KITTI_raw_data')
    
 
