@@ -38,30 +38,30 @@ def create_BEV(points, bboxes, resolution=0.08):
     # Create figure
     fig, ax = plt.subplots(figsize=(4, 5))
 
+    # Define the colormap here, so it's available for both conditions
+    cmap = plt.colormaps["plasma"]
+    bad_color = 'lightgrey'  # Define the color used for the background
+    cmap.set_bad(color=bad_color)  # Set the background color for masked areas
+
     if len(points) != 0:
         # Project 3D points onto the ground plane (ignore z-coordinate)
         points = np.concatenate(points)
         projected_points = points[:, :2]
 
         # Create 2D histogram
-        bev, x_edges, y_edges = np.histogram2d(
-            projected_points[:, 0], projected_points[:, 1], bins=(x_bins, y_bins))
+        bev, x_edges, y_edges = np.histogram2d(projected_points[:, 0], projected_points[:, 1], bins=(x_bins, y_bins))
 
         # Mask the areas where there are no points
         masked_bev = np.ma.masked_where(bev == 0, bev)
 
         # Plot the BEV with swapped X and Y axes
-        cmap = plt.colormaps["plasma"]
-        cmap.set_bad(color='lightgrey')  # Set the background color
-
         im = ax.imshow(masked_bev, origin='lower', extent=[y_edges[-1], y_edges[0], x_edges[0], x_edges[-1]], cmap=cmap)
     
         # Create a colorbar (uncomment when shwoing the whole figure with axes, etc.)
         #cb = fig.colorbar(im, label='Point density')
     else: 
         # If there are no points, return an image with only the background of the colormap
-        background_color = cmap(0)
-        fig.set_facecolor(background_color)
+        fig.set_facecolor(bad_color)
 
     ax.set_xlabel('Y (m)')
     ax.set_ylabel('X (m)')  
@@ -445,15 +445,17 @@ def plot_projected_pred_bounding_boxes(lidar2cam, frame, pred_corners_3D, BGR_co
 def draw_projected_3D_points(lidar2cam, frame, FOV_pts_3D, FOV_pts_2D, pts_to_draw_3D):
     """ Draw desired 3D LiDAR points onto the frame specified as input """
 
-    # Get color based on depth
-    colors = assign_colors_by_depth(FOV_pts_3D)
-    
-    # Draw only the filtered points
-    pts_to_draw_2D = lidar2cam.convert_3D_to_2D(np.array(pts_to_draw_3D), print_info=False)
+    # If there are points in the array
+    if len(pts_to_draw_3D) != 0:
+        # Get color based on depth
+        colors = assign_colors_by_depth(FOV_pts_3D)
+        
+        # Draw only the filtered points
+        pts_to_draw_2D = lidar2cam.convert_3D_to_2D(np.array(pts_to_draw_3D), print_info=False)
 
-    # Iterate over all 2D points that lie inside the FOV of the camera to get the color of each point correct
-    for i in range(FOV_pts_2D.shape[0]):
-        if FOV_pts_2D[i] in pts_to_draw_2D:
-            color = colors[i]
-            pt = (int(np.round(FOV_pts_2D[i, 0])), int(np.round(FOV_pts_2D[i, 1])))
-            cv2.circle(frame, pt, 2, color=(int(color[0]), int(color[1]), int(color[2])), thickness=-1)
+        # Iterate over all 2D points that lie inside the FOV of the camera to get the color of each point correct
+        for i in range(FOV_pts_2D.shape[0]):
+            if FOV_pts_2D[i] in pts_to_draw_2D:
+                color = colors[i]
+                pt = (int(np.round(FOV_pts_2D[i, 0])), int(np.round(FOV_pts_2D[i, 1])))
+                cv2.circle(frame, pt, 2, color=(int(color[0]), int(color[1]), int(color[2])), thickness=-1)

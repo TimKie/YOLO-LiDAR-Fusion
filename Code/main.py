@@ -114,7 +114,8 @@ if __name__ == "__main__":
             for i, pred_corner_3D in enumerate(all_pred_corners_3D):
                 plot_projected_pred_bounding_boxes(lidar2cam, frame, pred_corner_3D, (0, 0, 255), all_object_IDs[i])
 
-            draw_projected_3D_points(lidar2cam, frame, point_cloud_3D, point_cloud_2D, np.vstack(all_filtered_points_of_object))
+            all_filtered_points_of_object_combined = np.vstack(all_filtered_points_of_object) if all_filtered_points_of_object else all_filtered_points_of_object
+            draw_projected_3D_points(lidar2cam, frame, point_cloud_3D, point_cloud_2D, all_filtered_points_of_object_combined)
 
             # Create a bev representation
             bev = create_BEV(all_filtered_points_of_object, all_pred_corners_3D)
