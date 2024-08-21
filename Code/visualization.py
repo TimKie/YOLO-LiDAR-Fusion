@@ -327,7 +327,7 @@ def create_combined_video(images_left, images_right, output_path):
 
     # Define the output video parameters
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-    fps = 20
+    fps = 10
     combined_width = width_left + width_right  # Combined width for both videos
 
     # Create the video writer
