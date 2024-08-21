@@ -77,8 +77,6 @@ if __name__ == "__main__":
             output_path_video = "../Model_Output/Results_Video/"
         else:
             output_path_video = os.path.join(args.output_path, "Results_Video/")
-
-        print(output_path_video)
         
         os.makedirs(output_path_video, exist_ok=True)
 
