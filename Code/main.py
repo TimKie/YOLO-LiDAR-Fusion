@@ -28,19 +28,10 @@ if __name__ == "__main__":
     parser.add_argument('--pca', dest='pca', type=bool, default=False, help="specify wheter PCA should be used to create the 3D bounding boxes for all detected objects")
     parser.add_argument('--dataset-path', dest='dataset_path', type=str, default="../KITTI_dataset/", help="specify the relative path to the KITTI dataset")
     parser.add_argument('--output-path', dest='output_path', type=str, default="", help="specify the relative path where the output should be saved")
+    parser.add_argument('--image-amount', dest='image_amount', type=int, default=10, help="specify the desired amount of random images (only when first argument is 'random')")
+    parser.add_argument('--video-dir', dest='video_directory', type=str, default="../KITTI_raw_data", help="specify the relative path of the directory that contains the ordered frames of the video that the model should process (only when first argument is 'video')")
 
-    # Parse the initial arguments to determine the image_index
-    args, unknown = parser.parse_known_args()
-
-    # Conditional Argument Addition for random image amount
-    if args.image_index == "random":
-        parser.add_argument('--image-amount', dest='image_amount', type=int, default=10, help="specify the desired amount of random images (only when first argument is 'random')")
-
-    # Conditional Argument Addition for video input directory
-    if args.image_index == "video":
-        parser.add_argument('--video-dir', dest='video_directory', type=str, default="../KITTI_raw_data", help="specify the relative path of the directory that contains the ordered frames of the video that the model should process (only when first argument is 'video')")
-
-    # Re-parse the arguments to include the conditionally added arguments
+    # Parse the arguments to include the conditionally added arguments
     args = parser.parse_args()
 
     # Define the desired model
