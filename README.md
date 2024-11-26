@@ -1,6 +1,6 @@
 # YOLO-LiDAR Fusion
 ## 1. Overview
-This repository contains the code produced during my Master's Thesis in collaboration with the UBIX research group of the University of Luxembourg’s Interdisciplinary Centre for Security, Reliability, and Trust (SnT).
+This repository contains the code produced during my [Master's Thesis](https://github.com/TimKie/YOLO-LiDAR-Fusion/blob/fad44530dcfa172145f67ce0469d7b29bcd02bda/Master_Thesis_compressed.pdf) in collaboration with the UBIX research group of the University of Luxembourg’s Interdisciplinary Centre for Security, Reliability, and Trust (SnT).
 This thesis aimed to develop a resource-efficient model for 3D object detection utilizing LiDAR and camera sensors, tailored for autonomous vehicles with limited computational resources. An overview of the model is shown in the figure below.
 
 ![Model_Overview](assets/model_overview.svg)
